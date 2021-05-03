@@ -1,0 +1,109 @@
+#include <SoftwareSerial.h>
+#include<LiquidCrystal.h>
+LiquidCrystal lcd(13, 12, 11, 10, 9, 8); 
+SoftwareSerial mySerial(9, 10);
+//int sound=4;
+int pir=4;
+int moist=7;
+int sound=8;
+int buzzer=6;
+float temp_read,Temp_alert_val,Temp_shut_val;
+int sms_count=0,Fire_Set,moi,souds;
+void setup()
+{
+ pinMode(sound,INPUT);
+ pinMode(pir,INPUT);
+ pinMode(moist,INPUT);
+ pinMode(buzzer,INPUT);
+ mySerial.begin(9600); 
+ 36Serial.begin(9600); 
+// lcd.begin(16,2); 
+ delay(500);
+}
+void SendTextMessage()
+{
+ mySerial.println("AT+CMGF=1"); //To send SMS in Text Mode
+ delay(200);
+ mySerial.println("AT+CMGS=\"8870743277,9003927835\"\r"); // change to the phone number you 
+using 
+ delay(200);
+ mySerial.println("Fire detected");//the content of the message
+ delay(20);
+ mySerial.println((char)26);//the stopping character
+ delay(500);
+ mySerial.println("AT+CMGS=\"8870743277,9003927835\"\r"); // change to the phone number you 
+using 
+ delay(200);
+ mySerial.println("Baby in danger");//the content of the message
+ delay(200);
+ mySerial.println((char)26);//the message stopping character
+ delay(500);
+ 
+}
+void pirs()
+{
+int pirr= digitalRead(12);
+//float db = (pirr+83.2073) / 11.003;
+//Serial.print(pirr);
+if(pirr==HIGH)
+ 37{
+ Serial.print("baby cried");
+ pinMode(buzzer,LOW);
+ delay(500);
+ 
+ }
+ else if(pirr==LOW)
+ {
+ Serial.print("baby no cried");
+ pinMode(buzzer,HIGH);
+ delay(500);
+ }
+ 
+ 
+ }
+void moister()
+{
+ moi=digitalRead(7);
+if(moi==HIGH)
+{
+ Serial.print("baby is no motion");
+// SendTextMessage();
+ //pinMode(buzzer,LOW);
+ delay(500);
+ }
+ else if(moi==LOW)
+ {
+ // pinMode(buzzer,HIGH); 
+ SendTextMessage();
+ 
+ 38Serial.print("baby is motioned");
+ delay(500);
+ }
+ 
+ }
+ 
+void mov()
+{
+ sound=digitalRead(8);
+if(sound==HIGH)
+{
+//pinMode(buzzer,LOW);
+ Serial.print("movement detected");
+delay(500);
+ }
+ else if(sound==LOW) 
+{
+ //pinMode(buzzer,LOW);
+ Serial.print("no movement detected");
+delay(500);
+ }
+ }
+void loop()
+{
+ moister();
+ //delay(100);
+ pirs();
+//delay(100);
+ mov();
+// delay(100);
+}
